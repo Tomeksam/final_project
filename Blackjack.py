@@ -1,77 +1,9 @@
-import random
-
-# Define the deck with card values
-card_values = {
-    '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10,
-    'J': 10, 'Q': 10, 'K': 10, 'A': 11
-}
-
-# Card counting system values
-counting_values = {
-    '2': 1, '3': 1, '4': 1, '5': 1, '6': 1, '7': 0, '8': 0, '9': 0, '10': -1,
-    'J': -1, 'Q': -1, 'K': -1, 'A': -1
-}
-
-
-def create_deck():
-    """Creates a deck consisting of 6 standard 52-card decks."""
-    suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
-    deck = [f"{rank} of {suit}" for suit in suits for rank in card_values.keys()] * 6
-    random.shuffle(deck)
-    return deck
-
-
-def calculate_hand_value(hand):
-    """Calculates the value of a hand, handling Aces properly."""
-    value = sum(card_values[card.split()[0]] for card in hand)
-    ace_count = sum(1 for card in hand if card.startswith('A'))
-    while value > 21 and ace_count:
-        value -= 10
-        ace_count -= 1
-    return value
-
-
-def deal_initial_cards(deck):
-    """Deals two cards to both the player and dealer."""
-    return [deck.pop(), deck.pop()], [deck.pop(), deck.pop()]
-
-
-def display_hand(player, hand, hide_first_card=False):
-    """Displays a player's hand."""
-    if hide_first_card:
-        print(f"{player}'s hand: [Hidden], {hand[1]}")
-    else:
-        print(f"{player}'s hand: {', '.join(hand)} (Value: {calculate_hand_value(hand)})")
-
-
-def update_count(hand, count):
-    """Updates the card count based on the dealt hand."""
-    for card in hand:
-        rank = card.split()[0]
-        count += counting_values[rank]
-    return count
-
-
-def get_valid_input(prompt, valid_inputs):
-    """Gets valid user input from a list of valid inputs."""
-    while True:
-        user_input = input(prompt).strip().lower()
-        if user_input in valid_inputs:
-            return user_input
-        print("Invalid input. Please try again.")
-
-
-def get_valid_bet(money):
-    """Gets a valid bet from the user."""
-    while True:
-        try:
-            bet = int(input("Place your bet: $"))
-            if 0 < bet <= money:
-                return bet
-            print("Invalid bet amount. Please try again.")
-        except ValueError:
-            print("Invalid input. Please enter a number.")
-
+try:
+    from functions.inputs import *
+    from functions.count import *
+    from functions.deckgen import *
+except ModuleNotFoundError:
+    print("Module(s) not found")
 
 def blackjack_game():
     """Main function to run a text-based Blackjack game with betting and card counting."""
