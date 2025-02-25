@@ -1,5 +1,5 @@
 import random
-from count import *
+from count import calculate_hand_value
 
 #Create a dictionary which relates the value of the playing card with the corresponding blackjack value
 card_values = {
@@ -44,3 +44,21 @@ def display_hand(player, hand, hide_first_card=False):
     else:
         print(f"{player}'s hand: {', '.join(hand)} (Value: {calculate_hand_value(hand)})")
 
+def format_card(card):
+    """Formats card string with suit emojis.
+
+    Args:
+        card (str): The card string (e.g., '10 of Hearts').
+
+    Returns:
+        str: The formatted card string with an emoji (e.g., '10♥️').
+    """
+    # Define card suit emojis for display
+    suit_emojis = {
+        "Hearts": "♥️",
+        "Diamonds": "♦️",
+        "Clubs": "♣️",
+        "Spades": "♠️"
+    }
+    rank, suit = card.split(" of ")
+    return f"{rank}{suit_emojis[suit]}"

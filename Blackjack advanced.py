@@ -1,8 +1,13 @@
+import sys
+import os
+
+# Add the 'functions' folder to the system path
+sys.path.append(os.path.join(os.path.dirname(__file__), "functions"))
+
 try:
-    from functions.inputs import *
-    from functions.count import *
-    from functions.deckgen import *
-    from functions.deckgen import create_deck  # Ensure this import is present
+    from functions.inputs import get_valid_bet, get_valid_input
+    from functions.count import calculate_hand_value, update_count
+    from functions.deckgen import create_deck, deal_initial_cards, display_hand
     from functions.perfect_strategy import check_perfect_strategy
     import datetime
 except ModuleNotFoundError:
@@ -10,30 +15,6 @@ except ModuleNotFoundError:
 
 # Define Blackjack Payout Ratio for Natural Blackjack
 BLACKJACK_PAYOUT = 3
-
-# Define card suit emojis for display
-suit_emojis = {
-    "Hearts": "♥️",
-    "Diamonds": "♦️",
-    "Clubs": "♣️",
-    "Spades": "♠️"
-}
-
-
-def format_card(card):
-    """Formats card string with suit emojis.
-
-    Args:
-        card (str): The card string (e.g., '10 of Hearts').
-
-    Returns:
-        str: The formatted card string with an emoji (e.g., '10♥️').
-    """
-    rank, suit = card.split(" of ")
-    return f"{rank}{suit_emojis[suit]}"
-
-
-
 
 def blackjack_game():
     """Main function to run a text-based Blackjack game with betting, statistics, and strategy tracking.
@@ -76,7 +57,7 @@ def blackjack_game():
         # Player's turn loop
         player_turn = True
         while player_turn and calculate_hand_value(player_hand) < 21:
-            choice = get_valid_input("Do you want to (H)it, (S)tand, or (SP)lit?", ['h', 's', 'sp'])
+            choice = get_valid_input("Do you want to (H)it, (S)tand, or (SP)lit? ", ['h', 's', 'sp'])
 
             if choice == 'h':  # Player hits
                 player_hand.append(deck.pop())
