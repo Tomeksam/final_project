@@ -5,21 +5,26 @@ try:
 except ModuleNotFoundError:
     print("Module(s) not found")
 
+print("\nWelcome to Blackjack!")
 def blackjack_game():
-    """Main function to run a text-based Blackjack game with betting and card counting."""
-    money = 1000
-    count = 0
-    deck = create_deck()
+    """
+    Main function to run the Blackjack game along with the card-counting function
+    :return:
+    """
+    money = 1000 #Every player starts with $1000 in their balance
+    count = 0 #Ofcourse, the count starts at 0 at the start of the game
+    deck = create_deck() #Runs the create_deck function, to create a new shuffled deck at the beginning of every game.
+    stop = False
 
-    while money > 0:
+    while (money > 0) and (stop == False): #The game should only run while
         print(f"\nYou have ${money}.")
         bet = get_valid_bet(money)
+        print("\nGood luck!")
 
         player_hand, dealer_hand = deal_initial_cards(deck)
         count = update_count(player_hand, count)
         count = update_count(dealer_hand, count)
 
-        print("\nWelcome to Blackjack!")
         display_hand("Dealer", dealer_hand, hide_first_card=True)
         display_hand("Player", player_hand)
 
@@ -71,6 +76,15 @@ def blackjack_game():
                 print(f"Incorrect. The correct count is {count}.")
         except ValueError:
             print(f"Invalid input. The correct count is {count}.")
+
+
+        stopInput = get_valid_input("Do you want to keep going? (Y)es or (N)o", ['y','n'])
+        if stopInput == 'y':
+            stop = False
+            print("Great! Your not a quitter!")
+        elif stopInput == 'n':
+            stop = True
+            print(f"Thanks for playing! You ended with ${money}")
 
         if money <= 0:
             print("You're out of money! Game over.")
