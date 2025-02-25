@@ -1,5 +1,5 @@
 import random
-from functions.count import *
+from count import *
 
 #Create a dictionary which relates the value of the playing card with the corresponding blackjack value
 card_values = {
