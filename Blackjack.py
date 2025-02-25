@@ -15,6 +15,12 @@ def blackjack_game():
     count = 0 #Ofcourse, the count starts at 0 at the start of the game
     deck = create_deck() #Runs the create_deck function, to create a new shuffled deck at the beginning of every game.
     stop = False
+    win = 0
+    loss = 0
+    correct = 0
+    games = 0
+    hit = 0
+    stand = 0
 
     while (money > 0) and (stop == False): #The game should only run while
         print(f"\nYou have ${money}.")
@@ -35,13 +41,17 @@ def blackjack_game():
                 player_hand.append(deck.pop())
                 count = update_count([player_hand[-1]], count)
                 display_hand("Player", player_hand)
+                hit += 1
             elif choice == 's':
+                stand += 1
                 break
+
 
         player_value = calculate_hand_value(player_hand)
         if player_value > 21:
             print("Bust! You lose.")
             money -= bet
+            loss += 1
         else:
             # Dealer's turn
             print("\nDealer's turn:")
@@ -61,17 +71,20 @@ def blackjack_game():
             if dealer_value > 21 or player_value > dealer_value:
                 print("You win!")
                 money += bet
+                win += 1
             elif dealer_value == player_value:
                 print("It's a tie!")
             else:
                 print("Dealer wins!")
                 money -= bet
+                loss += 1
 
         # Ask for card count after each round
         try:
             guessed_count = int(input("What is the current card count? "))
             if guessed_count == count:
                 print("Correct!")
+                correct += 1
             else:
                 print(f"Incorrect. The correct count is {count}.")
         except ValueError:
@@ -82,14 +95,21 @@ def blackjack_game():
         if stopInput == 'y':
             stop = False
             print("Great! Your not a quitter!")
+            games += 1
         elif stopInput == 'n':
             stop = True
             print(f"Thanks for playing! You ended with ${money}")
+            with open("game_summary.txt", "a") as fp: # a - append; add to this file or create it if it doesn't exist
+                fp.write(f"\n\nGame: {datetime} \nFinal Amount: {money}\n Wins: {win}; Losses: {loss}\n Hits: {hit}; Stands: {stand}\n Card Counting Accuracy: {correct/games}%") # this is the same as the line below
+            # fp.write(text + "\n")
+            break
 
         if money <= 0:
             print("You're out of money! Game over.")
+            with open("game_summary.txt", "a") as fp: # a - append; add to this file or create it if it doesn't exist
+                fp.write(f"\n\nGame: {datetime} \nFinal Amount: {money}\n Wins: {win}; Losses: {loss}\n Hits: {hit}; Stands: {stand}\n Card Counting Accuracy: {(correct/games)*100}%") # this is the same as the line below
+            # fp.write(text + "\n")
             break
-
 
 # Run the game
 if __name__ == "__main__":
