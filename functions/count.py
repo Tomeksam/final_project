@@ -10,17 +10,35 @@ counting_values = {
     'J': -1, 'Q': -1, 'K': -1, 'A': -1
 }
 
+
 def calculate_hand_value(hand):
     """
-    Calculates the value of a hand, handling Aces properly
-    :param hand:
-    :return:
+    Calculates the value of a blackjack hand, correctly handling Aces.
+
+    Args:
+        hand (list): List of card strings formatted with emojis (e.g., '10♥️', 'A♠️').
+
+    Returns:
+        int: The total value of the hand.
     """
-    value = sum(card_values[card.split()[0]] for card in hand)
-    ace_count = sum(1 for card in hand if card.startswith('A'))
+    value = 0
+    ace_count = 0
+
+    for card in hand:
+        rank = card[:-1]  # Extract rank (remove emoji)
+
+        if rank in ["J", "Q", "K"]:
+            value += 10
+        elif rank == "A":
+            value += 11
+            ace_count += 1
+        else:
+            value += int(rank)
+
     while value > 21 and ace_count:
         value -= 10
         ace_count -= 1
+
     return value
 
 def update_count(hand, count):

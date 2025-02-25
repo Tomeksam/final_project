@@ -53,7 +53,6 @@ def format_card(card):
     Returns:
         str: The formatted card string with an emoji (e.g., '10♥️').
     """
-    # Define card suit emojis for display
     suit_emojis = {
         "Hearts": "♥️",
         "Diamonds": "♦️",
