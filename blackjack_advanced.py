@@ -99,25 +99,36 @@ def blackjack_game():
                     elif calculate_hand_value(player_hand) == 21:
                         player_turn = False  # End player's turn if exactly 21
                     expected_move = check_basic_strategy(player_hand, dealer_hand)  # Get recommended move
-                    if (choice == 'h' and expected_move == "hit") or (choice == 's' and expected_move == "stand"):
+
+                    # Compare the player's actual move to the expected move
+                    if choice == 'h':
+                        correct_move = expected_move == "hit"
+                    else:
+                        correct_move = expected_move == "stand"
+
+                    # Print and record the BS check
+                    if correct_move:
                         print("BS ✔")
-                        history.append(
-                            f"Move: {'Hit' if choice == 'h' else 'Stand'}, Player Total: {calculate_hand_value(player_hand)}, Dealer Upcard: {dealer_hand[0]}, Expected Move: {expected_move}, BS ✔")
                     else:
                         print("BS ❌")
-                        history.append(
-                            f"Move: {'Hit' if choice == 'h' else 'Stand'}, Player Total: {calculate_hand_value(player_hand)}, Dealer Upcard: {dealer_hand[0]}, Expected Move: {expected_move}, BS ❌")
 
-                elif choice == 's':  # Player stands
-                    stand += 1
-                    expected_move = check_basic_strategy(player_hand, dealer_hand)  # Get recommended move
-                    if (choice == 'h' and expected_move == "hit") or (choice == 's' and expected_move == "stand"):
-                        print("BS ✔")  # Correct move
-                    else:
-                        print("BS ❌")  # Wrong move
+                    # Store move history correctly
                     history.append(
-                        f"Move: Stand, Player Total: {calculate_hand_value(player_hand)}, Dealer Upcard: {dealer_hand[0]}, Expected Move: {expected_move}, BS {'✔' if expected_move == 'stand' else '❌'}")
-                    player_turn = False  #ensure turn ends when standing
+                        f"Move: {'Hit' if choice == 'h' else 'Stand'}, Player Total: {calculate_hand_value(player_hand)}, "
+                        f"Dealer Upcard: {original_dealer_upcard}, Expected Move: {expected_move}, BS {'✔' if correct_move else '❌'}"
+                    )
+                original_dealer_upcard = dealer_hand[0]  # Store the original dealer upcard before player actions
+                expected_move = check_basic_strategy(player_hand, dealer_hand)  # Get recommended move
+                # Check if the expected move matches the player's choice
+                correct_move = expected_move == "stand"
+                # Print and record basic strategy result
+                print("BS ✔" if correct_move else "BS ❌")
+                # Store move history correctly
+                history.append(
+                    f"Move: Stand, Player Total: {calculate_hand_value(player_hand)}, "
+                    f"Dealer Upcard: {original_dealer_upcard}, Expected Move: {expected_move}, BS {'✔' if correct_move else '❌'}"
+                )
+                player_turn = False  # Ensure turn ends when standing
         if calculate_hand_value(player_hand) > 21: # skip the dealer if you've busted
             continue
         if player_value <= 21:

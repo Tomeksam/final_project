@@ -15,7 +15,7 @@ def check_basic_strategy(player_hand, dealer_hand):
     card_values = {"J": 10, "Q": 10, "K": 10, "A": 11}
 
     # Extract dealer's upcard rank and remove suit emoji
-    dealer_upcard = dealer_hand[0].split()[0]  # extracts only the rank of the dealer
+    dealer_upcard = dealer_hand[0].split()[0] if " " in dealer_hand[0] else dealer_hand[0]  # Remove suits properly
     dealer_upcard = card_values.get(dealer_upcard, int(dealer_upcard) if dealer_upcard.isdigit() else 0)
 
     # Extract player's hand ranks and convert values
