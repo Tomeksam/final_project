@@ -64,7 +64,7 @@ def blackjack_game():
                     hit += 1
                     if calculate_hand_value(player_hand) > 21:
                         # Ensure BS check happens before bust message
-                        expected_move = check_basic_strategy(player_hand, [original_dealer_upcard])
+                        expected_move = check_basic_strategy(player_hand, original_dealer_upcard)  # Pass as string
                         correct_move = expected_move == "hit"  # Since the player hit before busting
                         # Print and record BS check
                         print("BS ✔" if correct_move else "BS ❌")
@@ -131,7 +131,7 @@ def blackjack_game():
                     expected_move = expected_move.strip().lower()  # Normalize case to prevent mismatches
                     correct_move = expected_move == "stand"  # Ensure correct comparison
 
-                    # Print and store the BS check
+                    correct_move = expected_move.strip().lower() == "stand"  # Ensure lowercase match
                     print(f"BS {'✔' if correct_move else '❌'} (Expected: {expected_move}, Your Move: Stand)")
 
                     # Log move history properly
@@ -160,7 +160,7 @@ def blackjack_game():
         display_hand("Dealer", dealer_hand)
 
         if calculate_hand_value(player_hand) > 21:
-            expected_move = check_basic_strategy(player_hand, [original_dealer_upcard])  # Ensure BS check happens before bust
+            expected_move = check_basic_strategy(player_hand, original_dealer_upcard)  # Pass as string
             correct_move = expected_move == "hit"  # Since the player hit before busting
             # Print and record the BS check
             print("BS ✔" if correct_move else "BS ❌")
