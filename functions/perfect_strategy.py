@@ -1,3 +1,5 @@
+from count import calculate_hand_value
+
 def check_perfect_strategy(player_hand, dealer_hand, split=False):
     """Checks if the player's move aligns with perfect Blackjack strategy.
 
@@ -18,7 +20,16 @@ def check_perfect_strategy(player_hand, dealer_hand, split=False):
     elif dealer_upcard == "A":
         dealer_upcard = 11
     else:
-        dealer_upcard = int(dealer_upcard)
+        # Ensure dealer's upcard is extracted properly without the suit emoji
+        dealer_upcard = dealer_hand[0][:-1]  # Removes the last character (suit emoji)
+
+        # Convert face cards to numerical values
+        if dealer_upcard in ["J", "Q", "K"]:
+            dealer_upcard = 10
+        elif dealer_upcard == "A":
+            dealer_upcard = 11
+        else:
+            dealer_upcard = int(dealer_upcard)  # Convert number cards normally
 
     # Define basic strategy rules (simplified, can be expanded)
     strategy = {
