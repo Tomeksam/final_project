@@ -129,6 +129,7 @@ def blackjack_game():
                     # Ensure expected move is correctly checked when standing
                     expected_move = check_basic_strategy(player_hand, dealer_hand)
                     correct_move = expected_move == "stand"
+                    stand += 1
 
                     # Print and record the BS check
                     print("BS ✔" if correct_move else "BS ❌")
