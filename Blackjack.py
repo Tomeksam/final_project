@@ -8,7 +8,7 @@ try:
     from functions.inputs import get_valid_bet, get_valid_input
     from functions.count import calculate_hand_value, update_count
     from functions.deckgen import create_deck, deal_initial_cards, display_hand
-    from functions.perfect_strategy import check_perfect_strategy
+    from functions.basic_strategy import check_perfect_strategy
     import datetime
 except ModuleNotFoundError:
     print("Module(s) not found")

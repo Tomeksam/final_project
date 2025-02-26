@@ -8,7 +8,7 @@ try: # importing redundantly
     from functions.inputs import get_valid_bet, get_valid_input
     from functions.count import calculate_hand_value, update_count
     from functions.deckgen import create_deck, deal_initial_cards, display_hand, format_card
-    from functions.perfect_strategy import check_perfect_strategy
+    from functions.basic_strategy import check_basic_strategy
 except ModuleNotFoundError:
     print("Module(s) not found")
 
@@ -51,7 +51,7 @@ def blackjack_game():
         else:
             player_turn = True # Player's turn loop
             while player_turn and calculate_hand_value(player_hand) < 21:
-                choice = get_valid_input("Do you want to (H)it, (S)tand, or (SP)lit? ", ['h', 's', 'sp'])
+                choice = get_valid_input("Do you want to (H)it or (S)tand", ['h', 's'])
 
                 if choice == 'h':  # Player hits
                     new_card = deck.pop()
@@ -67,25 +67,12 @@ def blackjack_game():
                         continue  # Skip dealer's turn if player busts
                     elif calculate_hand_value(player_hand) == 21:
                         player_turn = False  # End player's turn if exactly 21
-                    strategy_correct = check_perfect_strategy(player_hand, dealer_hand)
+                    strategy_correct = check_basic_strategy(player_hand, dealer_hand)
                     print("PS ✔" if strategy_correct else "PS ❌")
 
                 elif choice == 's':  # Player stands
                     stand += 1
-                    strategy_correct = check_perfect_strategy(player_hand, dealer_hand)
-                    print("PS ✔" if strategy_correct else "PS ❌")
-                    player_turn = False  # Move to dealer
-
-                elif choice == 'sp' and player_hand[0][:-1] == player_hand[1][:-1]:  # Player splits
-                    split_count += 1
-                    print("You chose to split!")
-                    hand1 = [format_card(player_hand[0]), format_card(deck.pop())]
-                    hand2 = [format_card(player_hand[1]), format_card(deck.pop())]
-                    print("Hand 1:")
-                    display_hand("Player", hand1)
-                    print("Hand 2:")
-                    display_hand("Player", hand2)
-                    strategy_correct = check_perfect_strategy(player_hand, dealer_hand, split=True)
+                    strategy_correct = check_basic_strategy(player_hand, dealer_hand)
                     print("PS ✔" if strategy_correct else "PS ❌")
                     player_turn = False  # Move to dealer
 
@@ -123,7 +110,7 @@ def blackjack_game():
             loss += 1
 
             result = "WON ✔(Dealer Bust)" if dealer_value > 21 else "WON ✔" if player_value > dealer_value else "LOST ❌(Player Bust)" if player_value > 21 else "LOST ❌" if dealer_value > player_value else "TIE"
-            strategy_correct = check_perfect_strategy(player_hand, dealer_hand)
+            strategy_correct = check_basic_strategy(player_hand, dealer_hand)
             history.append(
                 f"{money}    stood on {player_value} vs {dealer_value}, count = {count}        {result}, PS {'✔' if strategy_correct else '❌'}") # recording of the results into the list
 
@@ -145,7 +132,7 @@ def blackjack_game():
         file.write(f"Final Amount: {money}\n")
         file.write(f"Wins: {win}; Losses: {loss} (Win Rate: {win / (win + loss) * 100 if (win + loss) else 0:.2f}%)\n")
         file.write(
-            f"Hits: {hit}; Stands: {stand}; Splits: {split_count} (Hit Rate: {hit / (hit + stand) * 100 if (hit + stand) else 0:.2f}%)\n")
+            f"Hits: {hit}; Stands: {stand}; (Hit Rate: {hit / (hit + stand) * 100 if (hit + stand) else 0:.2f}%)\n")
         file.write(f"Card Counting Accuracy: {correct / (games if games else 1) * 100:.2f}%\n")
         file.write("\nHistory:\n")
         file.write("\n".join(history))
