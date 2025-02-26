@@ -15,8 +15,8 @@ def calculate_hand_value(hand):
     """
     Calculates the value of a blackjack hand, correctly handling Aces.
 
-    Args:
-        hand (list): List of card strings formatted with emojis (e.g., '10♥️', 'A♠️').
+    :parameters:
+        hand (list): List of card strings formatted with emojis (10♥️', 'A♠️').
 
     Returns:
         int: The total value of the hand.
@@ -24,8 +24,12 @@ def calculate_hand_value(hand):
     value = 0
     ace_count = 0
 
+    # Dictionary to extract numeric rank (removing emoji)
+    emoji_card_map = {f"{rank}{suit}": rank for suit in ["♥️", "♦️", "♣️", "♠️"] for rank in
+                      ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']}
+
     for card in hand:
-        rank = card[:-1]  # Extract rank (remove emoji)
+        rank = emoji_card_map.get(card, card[:-1])  # Use dictionary or fallback to slicing
 
         if rank in ["J", "Q", "K"]:
             value += 10

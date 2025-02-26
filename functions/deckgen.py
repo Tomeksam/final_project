@@ -44,20 +44,31 @@ def display_hand(player, hand, hide_first_card=False):
     else:
         print(f"{player}'s hand: {', '.join(hand)} (Value: {calculate_hand_value(hand)})")
 
-def format_card(card):
-    """Formats card string with suit emojis.
 
-    Args:
-        card (str): The card string (e.g., '10 of Hearts').
+def format_card(card):
+    """Ensures card is formatted correctly with suit emojis.
+
+    :parameter
+        card
 
     Returns:
-        str: The formatted card string with an emoji (e.g., '10♥️').
+        str: The formatted card string with an emoji
     """
+    # Mapping of suits to emojis
     suit_emojis = {
         "Hearts": "♥️",
         "Diamonds": "♦️",
         "Clubs": "♣️",
         "Spades": "♠️"
     }
-    rank, suit = card.split(" of ")
-    return f"{rank}{suit_emojis[suit]}"
+
+    # If the card is already formatted with an emoji, return it as is
+    if any(suit in card for suit in suit_emojis.values()):
+        return card  # Prevents reformatting an already formatted card
+
+    # Standard formatting for new cards
+    if " of " in card:  # Ensures only standard cards are formatted
+        rank, suit = card.split(" of ")
+        return f"{rank}{suit_emojis[suit]}"
+
+    return card  # If unexpected format, return as is
