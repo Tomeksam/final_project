@@ -129,7 +129,7 @@ def blackjack_game():
                     stand += 1  # Increment stand counter
                     expected_move = check_basic_strategy(player_hand,
                                                          original_dealer_upcard)  # Ensure correct dealer upcard is used
-                    correct_move = expected_move == "stand"  # Verify if the move was correct
+                    correct_move = expected_move.strip().lower() == "stand"  # Ensure exact case-sensitive match
 
                     # Print BS Check result
                     print("BS ✔" if correct_move else "BS ❌")
