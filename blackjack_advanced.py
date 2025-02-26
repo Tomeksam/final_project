@@ -125,16 +125,16 @@ def blackjack_game():
                         f"Move: {'Hit' if choice == 'h' else 'Stand'}, Player Total: {calculate_hand_value(player_hand)}, "
                         f"Dealer Upcard: {original_dealer_upcard}, Expected Move: {expected_move}, BS {'✔' if correct_move else '❌'}"
                     )
-                if choice == 's':
-                    stand += 1  # Increment the stand counter for statistics
+                if choice == 's':  # Player stands
+                    stand += 1  # Increment stand counter
                     expected_move = check_basic_strategy(player_hand,
-                                                         original_dealer_upcard)  # Correctly pass dealer's upcard
-                    correct_move = expected_move == "stand"  # Verify expected move
+                                                         original_dealer_upcard)  # Ensure correct dealer upcard is used
+                    correct_move = expected_move == "stand"  # Verify if the move was correct
 
-                    # Print and record BS check
+                    # Print BS Check result
                     print("BS ✔" if correct_move else "BS ❌")
 
-                    # Store move history correctly
+                    # Log move in history
                     history.append(
                         f"Move: Stand, Player Total: {calculate_hand_value(player_hand)}, "
                         f"Dealer Upcard: {original_dealer_upcard}, Expected Move: {expected_move}, BS {'✔' if correct_move else '❌'}"
