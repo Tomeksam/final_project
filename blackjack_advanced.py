@@ -51,7 +51,7 @@ def blackjack_game():
             money += bet * BLACKJACK_PAYOUT
             win += 1
         else:
-            original_dealer_upcard = dealer_hand[0]  # Store the dealer's upcard at the start of the player's turn
+            original_dealer_upcard = dealer_hand[0].split()[0]  # Extract only the rank, removing suits (e.g., "10" from "10♦")
             player_turn = True # Player's turn loop
             while player_turn and calculate_hand_value(player_hand) < 21:
                 choice = get_valid_input("Do you want to (H)it or (S)tand", ['h', 's'])
@@ -126,11 +126,11 @@ def blackjack_game():
                         f"Dealer Upcard: {original_dealer_upcard}, Expected Move: {expected_move}, BS {'✔' if correct_move else '❌'}"
                     )
                 if choice == 's':
-                    # Ensure expected move is correctly checked when standing
-                    expected_move = check_basic_strategy(player_hand, dealer_hand)
+                    expected_move = check_basic_strategy(player_hand,
+                                                         [original_dealer_upcard])  # Use original dealer upcard
                     correct_move = expected_move == "stand"
 
-                    # Print and record the BS check
+                    # Print and record BS check
                     print("BS ✔" if correct_move else "BS ❌")
                     history.append(
                         f"Move: Stand, Player Total: {calculate_hand_value(player_hand)}, "
@@ -138,6 +138,7 @@ def blackjack_game():
                     )
 
                     player_turn = False  # Ensure turn ends when standing
+
         if calculate_hand_value(player_hand) > 21: # skip the dealer if you've busted
             continue
         if player_value <= 21:
