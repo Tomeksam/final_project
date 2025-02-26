@@ -111,7 +111,7 @@ def blackjack_game():
                     elif calculate_hand_value(player_hand) == 21:
                         player_turn = False  # End player's turn if exactly 21
                     # Ensure expected move is correctly checked based on original dealer upcard
-                    expected_move = check_basic_strategy(player_hand, [original_dealer_upcard])
+                    expected_move = check_basic_strategy(player_hand, original_dealer_upcard)
                     # Ensure move is compared correctly
                     correct_move = (choice == 'h' and expected_move == "hit") or (
                                 choice == 's' and expected_move == "stand")
@@ -129,15 +129,13 @@ def blackjack_game():
                     expected_move = check_basic_strategy(player_hand,
                                                          [original_dealer_upcard])  # Pass dealer upcard as list
                     expected_move = expected_move.strip().lower()  # Normalize case to prevent mismatches
-                    correct_move = expected_move == "stand"  # Ensure correct comparison
-
                     correct_move = expected_move.strip().lower() == "stand"  # Ensure lowercase match
-                    print(f"BS {'✔' if correct_move else '❌'} (Expected: {expected_move}, Your Move: Stand)")
+                    print(f"BS {'✔' if correct_move else '❌'} (Expected: {expected_move.capitalize()}, Your Move: Stand)")
 
                     # Log move history properly
                     history.append(
                         f"Move: Stand, Player Total: {calculate_hand_value(player_hand)}, "
-                        f"Dealer Upcard: {original_dealer_upcard}, Expected Move: {expected_move}, BS {'✔' if correct_move else '❌'}"
+                        f"Dealer Upcard: {original_dealer_upcard}"
                     )
                     player_turn = False  # Ensure turn ends when standing
 
@@ -216,7 +214,7 @@ def blackjack_game():
         file.write(f"Card Counting Accuracy: {correct / (games if games else 1) * 100:.2f}%\n")
         file.write(f"Basic Strategy Accuracy: {strategy_accuracy:.2f}%\n")  # New line for BS accuracy
         file.write("\nHistory:\n")
-        file.write("\n".join(history))
+        file.write("\n".join(history) + "\n ")
 
 if __name__ == "__main__":
     blackjack_game()
