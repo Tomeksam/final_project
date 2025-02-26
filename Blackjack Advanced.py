@@ -154,7 +154,7 @@ def blackjack_game():
             result = "WON ✔(Dealer Bust)" if dealer_value > 21 else "WON ✔" if player_value > dealer_value else "LOST ❌(Player Bust)" if player_value > 21 else "LOST ❌" if dealer_value > player_value else "TIE"
             strategy_correct = check_basic_strategy(player_hand, dealer_hand)
             history.append(
-                f"{money}    stood on {player_value} vs {dealer_value}, count = {count}        {result}, PS {'✔' if strategy_correct else '❌'}") # recording of the results into the list
+                f"{money}    stood on {player_value} vs {dealer_value}, count = {count}       {result}, PS {'✔' if strategy_correct else '❌'}") # recording of the results into the list
 
         guessed_count = int(get_valid_input("What is the current card count? ", [str(i) for i in range(-20, 21)]))  # Ask for the current count after each round
         if guessed_count == count:
