@@ -126,8 +126,9 @@ def blackjack_game():
                         f"Dealer Upcard: {original_dealer_upcard}, Expected Move: {expected_move}, BS {'✔' if correct_move else '❌'}"
                     )
                 if choice == 's':
+                    stand += 1  # Increment the stand counter for statistics
                     expected_move = check_basic_strategy(player_hand,
-                                                         [original_dealer_upcard])  # Use original dealer upcard
+                                                         [original_dealer_upcard])  # Ensure the correct upcard is used
                     correct_move = expected_move == "stand"
 
                     # Print and record BS check
