@@ -28,7 +28,7 @@ def check_basic_strategy(player_hand, dealer_hand):
         if player_total <= 17:
             return "hit"
         elif player_total == 18:
-            return "stand" if dealer_upcard in [2, 7, 8] else "hit"
+            return "stand" if dealer_upcard in [2, 3, 4, 5, 6, 7, 8] else "hit"
         else:
             return "stand"
 
