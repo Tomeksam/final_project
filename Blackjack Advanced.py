@@ -79,6 +79,10 @@ def blackjack_game():
                             stop = True
                             print(f"Thanks for playing! You ended with ${money}")
                             break
+                        correct_strategy = sum(1 for move in history if "BS ✔" in move) # Track correct strategy decisions
+                        total_strategy_checks = sum(1 for move in history if "BS" in move)
+                        strategy_accuracy = (
+                                                        correct_strategy / total_strategy_checks) * 100 if total_strategy_checks else 0
                         with open("game_summary.txt", "a",
                                   encoding="utf-8") as file:  # making sure our emojis are in the text file with this encoding
                             file.write(f"\nGame Summary ({datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')})\n")
@@ -88,19 +92,26 @@ def blackjack_game():
                             file.write(
                                 f"Hits: {hit}; Stands: {stand}; (Hit Rate: {hit / (hit + stand) * 100 if (hit + stand) else 0:.2f}%)\n")
                             file.write(f"Card Counting Accuracy: {correct / (games if games else 1) * 100:.2f}%\n")
+                            file.write(f"Basic Strategy Accuracy: {strategy_accuracy:.2f}%\n")  # New line for BS accuracy
                             file.write("\nHistory:\n")
                             file.write("\n".join(history))
                         continue  # Skip dealer's turn if player busts
                     elif calculate_hand_value(player_hand) == 21:
                         player_turn = False  # End player's turn if exactly 21
                     strategy_correct = check_basic_strategy(player_hand, dealer_hand)
-                    print("PS ✔" if strategy_correct else "PS ❌")
+                    print("BS ✔" if strategy_correct else "BS ❌")
+
+                    history.append(
+                        f"Move: {'Hit' if choice == 'h' else 'Stand'}, Player Total: {calculate_hand_value(player_hand)}, Dealer Upcard: {dealer_hand[0]}, BS {'✔' if strategy_correct else '❌'}")
+                    # Store the basic strategy decision in the game history
 
                 elif choice == 's':  # Player stands
                     stand += 1
                     strategy_correct = check_basic_strategy(player_hand, dealer_hand)
-                    print("PS ✔" if strategy_correct else "PS ❌")
-                    player_turn = False  # Move to dealer
+                    print("BS ✔" if strategy_correct else "BS ❌")  # Change PS to BS for clarity
+                    history.append(
+                        f"Move: {'Hit' if choice == 'h' else 'Stand'}, Player Total: {calculate_hand_value(player_hand)}, Dealer Upcard: {dealer_hand[0]}, BS {'✔' if strategy_correct else '❌'}")
+                    # Store the basic strategy decision in the game history
 
         if calculate_hand_value(player_hand) > 21: # skip the dealer if you've busted
             continue
@@ -152,6 +163,10 @@ def blackjack_game():
             stop = True
             print(f"Thanks for playing! You ended with ${money}")
             break
+    # Track correct strategy decisions
+    correct_strategy = sum(1 for move in history if "BS ✔" in move)
+    total_strategy_checks = sum(1 for move in history if "BS" in move)
+    strategy_accuracy = (correct_strategy / total_strategy_checks) * 100 if total_strategy_checks else 0
 
     # Write statistics to file
     with open("game_summary.txt", "a", encoding="utf-8") as file: # making sure our emojis are in the text file with this encoding
@@ -161,6 +176,7 @@ def blackjack_game():
         file.write(
             f"Hits: {hit}; Stands: {stand}; (Hit Rate: {hit / (hit + stand) * 100 if (hit + stand) else 0:.2f}%)\n")
         file.write(f"Card Counting Accuracy: {correct / (games if games else 1) * 100:.2f}%\n")
+        file.write(f"Basic Strategy Accuracy: {strategy_accuracy:.2f}%\n")  # New line for BS accuracy
         file.write("\nHistory:\n")
         file.write("\n".join(history))
 
