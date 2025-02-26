@@ -1,11 +1,10 @@
-import sys
+import sys # import basics
 import os
 import datetime
 
-# Add the 'functions' folder to the system path
-sys.path.append(os.path.join(os.path.dirname(__file__), "functions"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "functions")) # Redundancy 'functions' folder added to the system path
 
-try:
+try: # importing redundantly
     from functions.inputs import get_valid_bet, get_valid_input
     from functions.count import calculate_hand_value, update_count
     from functions.deckgen import create_deck, deal_initial_cards, display_hand, format_card
@@ -13,8 +12,7 @@ try:
 except ModuleNotFoundError:
     print("Module(s) not found")
 
-# Define Blackjack Payout Ratio for Natural Blackjack
-BLACKJACK_PAYOUT = 3
+BLACKJACK_PAYOUT = 3 # Define Blackjack Payout Ratio for Natural Blackjack
 
 
 def blackjack_game():
@@ -34,77 +32,122 @@ def blackjack_game():
         bets.append(bet)
         print("\nGood luck!")
 
-        # Deal initial cards
-        player_hand, dealer_hand = deal_initial_cards(deck)
+        player_hand, dealer_hand = deal_initial_cards(deck)  # Deal initial cards
         count = update_count(player_hand, count)  # Update count with player cards
         count = update_count(dealer_hand, count)  # Update count with dealer cards
 
-        # Format hands with suit emojis
-        player_hand = [format_card(card) for card in player_hand]
-        dealer_hand = [format_card(card) for card in dealer_hand]
+        player_hand = [format_card(card) for card in player_hand] # Format hands with suit emojis
+        dealer_hand = [format_card(card) for card in dealer_hand] # Format hands with suit emojis
 
-        display_hand("Dealer", dealer_hand, hide_first_card=True)
+        display_hand("Dealer", dealer_hand, hide_first_card=True) # hide the dealers second card
         display_hand("Player", player_hand)
 
-        # Check for natural blackjack
         player_value = calculate_hand_value(player_hand)
         dealer_value = calculate_hand_value(dealer_hand)
-        if len(player_hand) == 2 and player_value == 21:
+        if len(player_hand) == 2 and player_value == 21:  #Check for natural blackjack
             print("Blackjack! You win 3:1 payout!")
             money += bet * BLACKJACK_PAYOUT
             win += 1
+        else:
+            player_turn = True # Player's turn loop
+            while player_turn and calculate_hand_value(player_hand) < 21:
+                choice = get_valid_input("Do you want to (H)it, (S)tand, or (SP)lit? ", ['h', 's', 'sp'])
+
+                if choice == 'h':  # Player hits
+                    new_card = deck.pop()
+                    player_hand.append(format_card(new_card))
+                    count = update_count([new_card], count)
+                    display_hand("Player", player_hand)
+                    hit += 1
+                    if calculate_hand_value(player_hand) > 21:
+                        print("Bust! You lose.")
+                        money -= bet
+                        loss += 1
+                        player_turn = False
+                        continue  # Skip dealer's turn if player busts
+                    elif calculate_hand_value(player_hand) == 21:
+                        player_turn = False  # End player's turn if exactly 21
+                    strategy_correct = check_perfect_strategy(player_hand, dealer_hand)
+                    print("PS ✔" if strategy_correct else "PS ❌")
+
+                elif choice == 's':  # Player stands
+                    stand += 1
+                    strategy_correct = check_perfect_strategy(player_hand, dealer_hand)
+                    print("PS ✔" if strategy_correct else "PS ❌")
+                    player_turn = False  # Move to dealer
+
+                elif choice == 'sp' and player_hand[0][:-1] == player_hand[1][:-1]:  # Player splits
+                    split_count += 1
+                    print("You chose to split!")
+                    hand1 = [format_card(player_hand[0]), format_card(deck.pop())]
+                    hand2 = [format_card(player_hand[1]), format_card(deck.pop())]
+                    print("Hand 1:")
+                    display_hand("Player", hand1)
+                    print("Hand 2:")
+                    display_hand("Player", hand2)
+                    strategy_correct = check_perfect_strategy(player_hand, dealer_hand, split=True)
+                    print("PS ✔" if strategy_correct else "PS ❌")
+                    player_turn = False  # Move to dealer
+
+        if calculate_hand_value(player_hand) > 21: # skip the dealer if you've busted
             continue
-
-        # Player's turn loop
-        player_turn = True
-        while player_turn and calculate_hand_value(player_hand) < 21:
-            choice = get_valid_input("Do you want to (H)it, (S)tand, or (SP)lit? ", ['h', 's', 'sp'])
-
-            if choice == 'h':  # Player hits
+        if player_value <= 21:
+            print("\nDealer's turn:")
+            display_hand("Dealer", dealer_hand)
+            while calculate_hand_value(dealer_hand) < 17:
                 new_card = deck.pop()
-                player_hand.append(format_card(new_card))
+                dealer_hand.append(format_card(new_card))
                 count = update_count([new_card], count)
-                display_hand("Player", player_hand)
-                hit += 1
-                strategy_correct = check_perfect_strategy(player_hand, dealer_hand)
-                print("PS ✔" if strategy_correct else "PS ❌")
-            elif choice == 's':  # Player stands
-                stand += 1
-                player_turn = False
-                strategy_correct = check_perfect_strategy(player_hand, dealer_hand)
-                print("PS ✔" if strategy_correct else "PS ❌")
-            elif choice == 'sp' and player_hand[0].split()[0] == player_hand[1].split()[0]:  # Player splits
-                split_count += 1
-                print("You chose to split!")
-                hand1 = [format_card(player_hand[0]), format_card(deck.pop())]
-                hand2 = [format_card(player_hand[1]), format_card(deck.pop())]
-                print("Hand 1:")
-                display_hand("Player", hand1)
-                print("Hand 2:")
-                display_hand("Player", hand2)
-                strategy_correct = check_perfect_strategy(player_hand, dealer_hand, split=True)
-                print("PS ✔" if strategy_correct else "PS ❌")
+                display_hand("Dealer", dealer_hand)
+            dealer_value = calculate_hand_value(dealer_hand)
 
-        # Log game history
-        history.append(
-            f"{money:<7} stood on {player_value} vs {dealer_value}, count = {count:<3} {'WON ✔' if player_value > dealer_value else 'LOST ❌'}")
+        player_value = calculate_hand_value(player_hand) # Recalculate player's hand value before determining the winner
 
-        # Ask player if they want to continue
-        stop_input = get_valid_input("Do you want to keep going? (Y)es or (N)o", ['y', 'n'])
+        print("\nFinal Results:") # Determine winner
+        display_hand("Player", player_hand)
+        display_hand("Dealer", dealer_hand)
+
+        if player_value > 21:
+            print("Bust! You lose.")
+            money -= bet
+            loss += 1
+        elif dealer_value > 21 or player_value > dealer_value:
+            print("You win!")
+            money += bet
+            win += 1
+        elif dealer_value == player_value:
+            print("It's a tie!")
+        else:
+            print("Dealer wins!")
+            money -= bet
+            loss += 1
+
+            result = "WON ✔(Dealer Bust)" if dealer_value > 21 else "WON ✔" if player_value > dealer_value else "LOST ❌(Player Bust)" if player_value > 21 else "LOST ❌" if dealer_value > player_value else "TIE"
+            strategy_correct = check_perfect_strategy(player_hand, dealer_hand)
+            history.append(
+                f"{money}    stood on {player_value} vs {dealer_value}, count = {count}        {result}, PS {'✔' if strategy_correct else '❌'}") # recording of the results into the list
+
+        guessed_count = int(get_valid_input("What is the current card count? ", [str(i) for i in range(-20, 21)]))  # Ask for the current count after each round
+        if guessed_count == count:
+            print("Correct!")
+        else:
+            print(f"Incorrect. The correct count is {count}.")
+
+        stop_input = get_valid_input("Do you want to keep going? (Y)es or (N)o", ['y', 'n']) # Ask player if they want to continue
         if stop_input == 'n':
             stop = True
             print(f"Thanks for playing! You ended with ${money}")
             break
 
     # Write statistics to file
-    with open("game_summary.txt", "a") as file:
+    with open("game_summary.txt", "a", encoding="utf-8") as file: # making sure our emojis are in the text file with this encoding
         file.write(f"\nGame Summary ({datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')})\n")
-        file.write(f"Max Bet: ${max(bets)}\nMin Bet: ${min(bets)}\n")
-        file.write(f"Avg Bet: ${sum(bets) / len(bets) if bets else 0:.2f}\n")
-        file.write(f"Win Rate: {win / (win + loss) * 100 if (win + loss) else 0:.2f}%\n")
-        file.write(f"Hit Rate: {hit / (hit + stand) * 100 if (hit + stand) else 0:.2f}%\n")
-        file.write(f"Splits: {split_count}\n\n")
-        file.write("History:\n")
+        file.write(f"Final Amount: {money}\n")
+        file.write(f"Wins: {win}; Losses: {loss} (Win Rate: {win / (win + loss) * 100 if (win + loss) else 0:.2f}%)\n")
+        file.write(
+            f"Hits: {hit}; Stands: {stand}; Splits: {split_count} (Hit Rate: {hit / (hit + stand) * 100 if (hit + stand) else 0:.2f}%)\n")
+        file.write(f"Card Counting Accuracy: {correct / (games if games else 1) * 100:.2f}%\n")
+        file.write("\nHistory:\n")
         file.write("\n".join(history))
 
 
