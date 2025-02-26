@@ -127,17 +127,18 @@ def blackjack_game():
                     )
                 if choice == 's':
                     stand += 1  # Increment the stand counter for statistics
-                    expected_move = check_basic_strategy(player_hand,
-                                                         [original_dealer_upcard])  # Ensure the correct upcard is used
-                    correct_move = expected_move == "stand"
+                    expected_move = check_basic_strategy(player_hand,[original_dealer_upcard])  # Ensure the correct upcard is used
+                    if expected_move == "hit":
+                        print("BS ❌")
+                    else:
+                        print("BS ✔") #
 
                     # Print and record BS check
-                    print("BS ✔" if correct_move else "BS ❌")
+                    #print("BS ✔" if correct_move else "BS ❌")
                     history.append(
                         f"Move: Stand, Player Total: {calculate_hand_value(player_hand)}, "
-                        f"Dealer Upcard: {original_dealer_upcard}, Expected Move: {expected_move}, BS {'✔' if correct_move else '❌'}"
+                        f"Dealer Upcard: {original_dealer_upcard}, Expected Move: {expected_move}, BS {'✔' if expected_move == 'stand' else '❌'}"
                     )
-
                     player_turn = False  # Ensure turn ends when standing
 
         if calculate_hand_value(player_hand) > 21: # skip the dealer if you've busted
@@ -186,7 +187,7 @@ def blackjack_game():
             result = "WON ✔(Dealer Bust)" if dealer_value > 21 else "WON ✔" if player_value > dealer_value else "LOST ❌(Player Bust)" if player_value > 21 else "LOST ❌" if dealer_value > player_value else "TIE"
             strategy_correct = check_basic_strategy(player_hand, dealer_hand)
             history.append(
-                f"{money}    stood on {player_value} vs {dealer_value}, count = {count}       {result}, PS {'✔' if strategy_correct else '❌'}") # recording of the results into the list
+            f"{money}    stood on {player_value} vs {dealer_value}, count = {count}       {result}, BS {'✔' if strategy_correct else '❌'}") # recording of the results into the list
 
         guessed_count = int(get_valid_input("What is the current card count? ", [str(i) for i in range(-20, 21)]))  # Ask for the current count after each round
         if guessed_count == count:
