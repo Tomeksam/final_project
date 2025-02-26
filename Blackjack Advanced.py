@@ -32,6 +32,8 @@ def blackjack_game():
         bets.append(bet)
         print("\nGood luck!")
 
+        games += 1
+
         player_hand, dealer_hand = deal_initial_cards(deck)  # Deal initial cards
         count = update_count(player_hand, count)  # Update count with player cards
         count = update_count(dealer_hand, count)  # Update count with dealer cards
@@ -64,6 +66,30 @@ def blackjack_game():
                         money -= bet
                         loss += 1
                         player_turn = False
+                        guessed_count = int(get_valid_input("What is the current card count? ", [str(i) for i in range(-20,21)]))  # Ask for the current count after each round
+                        if guessed_count == count:
+                            print("Correct!")
+                            correct += 1
+                        else:
+                            print(f"Incorrect. The correct count is {count}.")
+
+                        stop_input = get_valid_input("Do you want to keep going? (Y)es or (N)o",
+                                                     ['y', 'n'])  # Ask player if they want to continue
+                        if stop_input == 'n':
+                            stop = True
+                            print(f"Thanks for playing! You ended with ${money}")
+                            break
+                        with open("game_summary.txt", "a",
+                                  encoding="utf-8") as file:  # making sure our emojis are in the text file with this encoding
+                            file.write(f"\nGame Summary ({datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')})\n")
+                            file.write(f"Final Amount: {money}\n")
+                            file.write(
+                                f"Wins: {win}; Losses: {loss} (Win Rate: {win / (win + loss) * 100 if (win + loss) else 0:.2f}%)\n")
+                            file.write(
+                                f"Hits: {hit}; Stands: {stand}; (Hit Rate: {hit / (hit + stand) * 100 if (hit + stand) else 0:.2f}%)\n")
+                            file.write(f"Card Counting Accuracy: {correct / (games if games else 1) * 100:.2f}%\n")
+                            file.write("\nHistory:\n")
+                            file.write("\n".join(history))
                         continue  # Skip dealer's turn if player busts
                     elif calculate_hand_value(player_hand) == 21:
                         player_turn = False  # End player's turn if exactly 21
@@ -117,6 +143,7 @@ def blackjack_game():
         guessed_count = int(get_valid_input("What is the current card count? ", [str(i) for i in range(-20, 21)]))  # Ask for the current count after each round
         if guessed_count == count:
             print("Correct!")
+            correct += 1
         else:
             print(f"Incorrect. The correct count is {count}.")
 
@@ -136,6 +163,9 @@ def blackjack_game():
         file.write(f"Card Counting Accuracy: {correct / (games if games else 1) * 100:.2f}%\n")
         file.write("\nHistory:\n")
         file.write("\n".join(history))
+
+        print(f"games = {games}")
+        print(f" correct = {correct}")
 
 
 if __name__ == "__main__":
