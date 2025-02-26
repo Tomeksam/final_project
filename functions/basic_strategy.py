@@ -25,12 +25,14 @@ def check_basic_strategy(player_hand, dealer_hand):
 
     # **Soft Hands (Contains an Ace as 11)**
     if "A" in player_ranks and sum(player_values) <= 21:  # Ensure soft hand check
-        if player_total <= 17:
-            return "hit"
-        elif player_total == 18:
-            return "stand" if dealer_upcard in [2, 3, 4, 5, 6, 7, 8] else "hit"
-        else:
+        if player_total >= 19:  # FIX: Always stand on soft 19 or higher
             return "stand"
+        elif player_total == 18:
+            return "stand" if dealer_upcard in [2, 7, 8] else "hit"
+        elif player_total == 17:
+            return "hit"
+        else:
+            return "hit"
 
     # **Hard Hands (No Ace or Ace counts as 1)**
     if player_total >= 17:

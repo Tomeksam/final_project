@@ -129,17 +129,19 @@ def blackjack_game():
                     stand += 1  # Increment stand counter
                     expected_move = check_basic_strategy(player_hand,
                                                          original_dealer_upcard)  # Ensure correct dealer upcard is used
-                    correct_move = expected_move.strip().lower() == "stand"  # Ensure exact case-sensitive match
+
+                    # Normalize expected move (lowercase & strip whitespace) to avoid case mismatches
+                    expected_move = expected_move.strip().lower()
+                    correct_move = expected_move == "stand"  # Correctly verify expected move
 
                     # Print BS Check result
-                    print("BS ✔" if correct_move else "BS ❌")
+                    print(f"BS {'✔' if correct_move else '❌'} (Expected: {expected_move}, Your Move: Stand)")
 
                     # Log move in history
                     history.append(
                         f"Move: Stand, Player Total: {calculate_hand_value(player_hand)}, "
                         f"Dealer Upcard: {original_dealer_upcard}, Expected Move: {expected_move}, BS {'✔' if correct_move else '❌'}"
                     )
-
                     player_turn = False  # Ensure turn ends when standing
 
         if calculate_hand_value(player_hand) > 21: # skip the dealer if you've busted
