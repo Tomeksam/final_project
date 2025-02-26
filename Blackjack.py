@@ -103,7 +103,7 @@ def blackjack_game():
         if stopinput == 'n':
             print("Great! Your not a quitter!")
             games += 1
-        elif stopInput == 'n':
+        elif stopinput == 'n':
             print(f"Thanks for playing! You ended with ${money}")
             with open("game_summary.txt", "a") as fp: # a - append; add to this file or create it if it doesn't exist
                 fp.write(f"\n\nGame: {datetime.datetime.now()} \nFinal Amount: {money}\n Wins: {win}; Losses: {loss}\n Hits: {hit}; Stands: {stand}\n Card Counting Accuracy: {correct/games}%") # this is the same as the line below
