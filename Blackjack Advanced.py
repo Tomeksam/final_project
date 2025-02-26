@@ -98,19 +98,26 @@ def blackjack_game():
                         continue  # Skip dealer's turn if player busts
                     elif calculate_hand_value(player_hand) == 21:
                         player_turn = False  # End player's turn if exactly 21
-                    strategy_correct = check_basic_strategy(player_hand, dealer_hand)
-                    print("BS ✔" if strategy_correct else "BS ❌")
+                    expected_move = check_basic_strategy(player_hand, dealer_hand)  # Get recommended move
 
+                    if (choice == 'h' and expected_move == "hit") or (choice == 's' and expected_move == "stand"):
+                        print("BS ✔")  # Correct move
+                    else:
+                        print("BS ❌")  # Wrong move
                     history.append(
-                        f"Move: {'Hit' if choice == 'h' else 'Stand'}, Player Total: {calculate_hand_value(player_hand)}, Dealer Upcard: {dealer_hand[0]}, BS {'✔' if strategy_correct else '❌'}")
+                        f"Move: {'Hit' if choice == 'h' else 'Stand'}, Player Total: {calculate_hand_value(player_hand)}, Dealer Upcard: {dealer_hand[0]}, Expected Move: {expected_move}, BS {'✔' if (choice == 'h' and expected_move == 'hit') or (choice == 's' and expected_move == 'stand') else '❌'}")
                     # Store the basic strategy decision in the game history
 
                 elif choice == 's':  # Player stands
                     stand += 1
-                    strategy_correct = check_basic_strategy(player_hand, dealer_hand)
-                    print("BS ✔" if strategy_correct else "BS ❌")  # Change PS to BS for clarity
+                    expected_move = check_basic_strategy(player_hand, dealer_hand)  # Get recommended move
+
+                    if (choice == 'h' and expected_move == "hit") or (choice == 's' and expected_move == "stand"):
+                        print("BS ✔")  # Correct move
+                    else:
+                        print("BS ❌")  # Wrong move
                     history.append(
-                        f"Move: {'Hit' if choice == 'h' else 'Stand'}, Player Total: {calculate_hand_value(player_hand)}, Dealer Upcard: {dealer_hand[0]}, BS {'✔' if strategy_correct else '❌'}")
+                        f"Move: {'Hit' if choice == 'h' else 'Stand'}, Player Total: {calculate_hand_value(player_hand)}, Dealer Upcard: {dealer_hand[0]}, Expected Move: {expected_move}, BS {'✔' if (choice == 'h' and expected_move == 'hit') or (choice == 's' and expected_move == 'stand') else '❌'}")
                     # Store the basic strategy decision in the game history
 
         if calculate_hand_value(player_hand) > 21: # skip the dealer if you've busted
