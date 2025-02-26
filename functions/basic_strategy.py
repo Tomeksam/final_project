@@ -6,7 +6,6 @@ def check_basic_strategy(player_hand, dealer_hand):
     :Parameters:
         player_hand (list of str): List of player's card strings with emoji suits.
         dealer_hand (list of str): List of dealer's card strings with emoji suits.
-        split (bool): True if the player has split their hand, otherwise False.
 
     Returns:
         bool: True if the move follows basic strategy, False otherwise.
@@ -24,22 +23,24 @@ def check_basic_strategy(player_hand, dealer_hand):
     player_values = [card_values.get(rank, int(rank) if rank.isdigit() else 0) for rank in player_ranks]
     player_total = sum(player_values)
 
-    # Check for soft hand (Ace involved and only two cards)
+    # **Soft Hands (Contains an Ace)**
     if "A" in player_ranks and len(player_hand) == 2:
         if player_total == 18:
             return dealer_upcard in [2, 7, 8]  # Stand vs 2, 7, 8; otherwise hit
         elif player_total >= 19:
             return True  # Always stand on 19+
+        elif player_total == 17:
+            return False  # Always hit on soft 17
         else:
-            return False  # Hit on soft totals 13-17
+            return False  # Hit on soft totals 13-16
 
-    # Basic Strategy Conditions for Hard Hands
+    # **Hard Hands (No Ace or Used as 1)**
     if player_total >= 17:
         return True  # Always stand on 17+
     elif 13 <= player_total <= 16:
-        return dealer_upcard in [7, 8, 9, 10, 11]  # Hit against 7-A, stand vs. 2-6
+        return dealer_upcard >= 7  # Hit against 7-A, stand vs. 2-6
     elif player_total == 12:
-        return dealer_upcard in [2, 3, 7, 8, 9, 10, 11]  # Hit against 2, 3, 7-A; stand vs. 4-6
+        return dealer_upcard not in [4, 5, 6]  # Stand on 4-6, hit otherwise
     elif player_total == 11:
         return True  # Always hit on 11
     elif player_total == 10:
