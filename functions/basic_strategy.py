@@ -37,14 +37,14 @@ def check_basic_strategy(player_hand, dealer_hand):
     if player_total >= 17:
         return True  # Always stand on 17+
     elif 13 <= player_total <= 16:
-        return dealer_upcard < 7  # Stand on 13-16 if dealer shows 2-6, otherwise hit
+        return dealer_upcard >= 7  # Hit against 7-A, stand vs. 2-6
     elif player_total == 12:
-        return dealer_upcard in [4, 5, 6]  # Stand on 12 if dealer shows 4-6, otherwise hit
+        return dealer_upcard >= 7 or dealer_upcard <= 3  # Hit against 2, 3, 7-A; stand vs. 4-6
     elif player_total == 11:
         return True  # Always hit on 11
     elif player_total == 10:
-        return dealer_upcard < 10  # Hit if dealer has 10 or A
+        return dealer_upcard >= 10  # Hit against 10-A, stand against 2-9
     elif player_total == 9:
-        return dealer_upcard in [3, 4, 5, 6]  # Hit unless dealer shows 3-6
+        return dealer_upcard >= 7  # Hit against 7-A, stand against 2-6
     else:
         return False  # Always hit on anything below 9
