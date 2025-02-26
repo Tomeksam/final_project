@@ -125,9 +125,18 @@ def blackjack_game():
                         f"Move: {'Hit' if choice == 'h' else 'Stand'}, Player Total: {calculate_hand_value(player_hand)}, "
                         f"Dealer Upcard: {original_dealer_upcard}, Expected Move: {expected_move}, BS {'✔' if correct_move else '❌'}"
                     )
-                # Store the original dealer upcard before player actions
-                original_dealer_upcard = dealer_hand[0]
                 if choice == 's':
+                    # Ensure expected move is correctly checked when standing
+                    expected_move = check_basic_strategy(player_hand, dealer_hand)
+                    correct_move = expected_move == "stand"
+
+                    # Print and record the BS check
+                    print("BS ✔" if correct_move else "BS ❌")
+                    history.append(
+                        f"Move: Stand, Player Total: {calculate_hand_value(player_hand)}, "
+                        f"Dealer Upcard: {original_dealer_upcard}, Expected Move: {expected_move}, BS {'✔' if correct_move else '❌'}"
+                    )
+
                     player_turn = False  # Ensure turn ends when standing
         if calculate_hand_value(player_hand) > 21: # skip the dealer if you've busted
             continue
@@ -205,10 +214,6 @@ def blackjack_game():
         file.write(f"Basic Strategy Accuracy: {strategy_accuracy:.2f}%\n")  # New line for BS accuracy
         file.write("\nHistory:\n")
         file.write("\n".join(history))
-
-        print(f"games = {games}")
-        print(f" correct = {correct}")
-
 
 if __name__ == "__main__":
     blackjack_game()
